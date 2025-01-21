@@ -1,6 +1,6 @@
 export const classMapping = {
   "IK-A": {
-    channel: 1329717013148602399,
+    channel: 1320430074721206312,
     id: 1320065263760052346,
     username: "3.34.24.0.26",
     password: "Polines*2024",
@@ -16,7 +16,7 @@ export const classMapping = {
     },
   },
   "IK-B": {
-    channel: 1329717013148602399,
+    channel: 1320435722892607539,
     id: 1320065786613596253,
     username: process.env.USERNAME_IK1B,
     password: process.env.PASSWORD_IK1B,
@@ -34,7 +34,7 @@ export const classMapping = {
     },
   },
   "IK-C": {
-    channel: 1329717013148602399,
+    channel: 1320435752169111686,
     id: 1320066078759456820,
     username: process.env.USERNAME_IK1C,
     password: process.env.PASSWORD_IK1C,
@@ -50,7 +50,7 @@ export const classMapping = {
     },
   },
   "IK-D": {
-    channel: 1329717013148602399,
+    channel: 1320435775103303791,
     id: 1320067521423999081,
     username: process.env.USERNAME_IK1D,
     password: process.env.PASSWORD_IK1D,
@@ -66,7 +66,7 @@ export const classMapping = {
     },
   },
   "IK-E": {
-    channel: 1329717013148602399,
+    channel: 1320435797354086420,
     id: 1320067685077221438,
     username: process.env.USERNAME_IK1E,
     password: process.env.PASSWORD_IK1E,
