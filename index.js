@@ -1,7 +1,19 @@
 import "dotenv/config";
+import http from "http";
 import { Client, GatewayIntentBits } from "discord.js";
 import { createSession, login, detectNewTasks } from "./src/services/elnino_scraper.js";
 import { classMapping } from "./src/services/class_mapping.js";
+
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Bot Discord is running!\n");
+});
+
+server.listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
 
 const client = new Client({
   intents: [
