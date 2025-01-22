@@ -1,20 +1,10 @@
 import "dotenv/config";
-import http from "http";
 import { Client, GatewayIntentBits } from "discord.js";
-import { createSession, login, detectNewTasks } from "./src/services/elnino_scraper.js";
+import { login, detectNewTasks } from "./src/services/elnino_scraper.js";
 import { classMapping } from "./src/services/class_mapping.js";
+import http from "http";
 
-const PORT = process.env.PORT || 3000;
-
-const server = http.createServer((req, res) => {
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("Bot Discord is running!\n");
-});
-
-server.listen(PORT, () => {
-  console.log(`HTTP server listening on port ${PORT}`);
-});
-
+// Konfigurasi Bot
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -23,6 +13,7 @@ const client = new Client({
   ],
 });
 
+// Event: Bot Siap
 client.once("ready", async () => {
   console.log(`Bot ${client.user.tag} siap!`);
 
@@ -37,16 +28,15 @@ client.once("ready", async () => {
     }
 
     try {
-      const session = await createSession();
-      const cookies = await login(session, config.username, config.password);
-      if (!cookies) {
+      const session = await login(config.username, config.password);
+      if (!session) {
         console.error(`[ERROR] Gagal login untuk kelas ${className}`);
         continue;
       }
 
       for (const [courseName, courseUrl] of Object.entries(config.matkul)) {
         console.log(`[INFO] Memeriksa tugas baru untuk ${courseName}`);
-        await detectNewTasks(courseUrl, session, sentTasks, client, config.channel, config.id);
+        await detectNewTasks(courseUrl, session, sentTasks, client, config.channel);
       }
     } catch (error) {
       console.error(`[ERROR] Kesalahan saat memproses kelas ${className}: ${error.message}`);
@@ -54,4 +44,23 @@ client.once("ready", async () => {
   }
 });
 
+// Event: Pesan
+client.on("messageCreate", async (message) => {
+  if (message.author.bot) return; // Abaikan pesan dari bot
+  if (message.content === "!isAlive") {
+    await message.reply("I'm here ^-^");
+  }
+});
+
+// Dummy HTTP Server untuk Render
+const PORT = process.env.PORT || 3000;
+
+http.createServer((req, res) => {
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("Bot Discord is running!\n");
+}).listen(PORT, () => {
+  console.log(`HTTP server listening on port ${PORT}`);
+});
+
+// Login ke Discord
 client.login(process.env.DISCORD_TOKEN);
