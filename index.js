@@ -1,10 +1,9 @@
 import "dotenv/config";
 import { Client, GatewayIntentBits } from "discord.js";
-import { login, detectNewTasks } from "./src/services/elnino_scraper.js";
+import { createSession, login, detectNewTasks } from "./src/services/elnino_scraper.js";
 import { classMapping } from "./src/services/class_mapping.js";
 import http from "http";
 
-// Konfigurasi Bot
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -13,7 +12,6 @@ const client = new Client({
   ],
 });
 
-// Event: Bot Siap
 client.once("ready", async () => {
   console.log(`Bot ${client.user.tag} siap!`);
 
@@ -28,15 +26,16 @@ client.once("ready", async () => {
     }
 
     try {
-      const session = await login(config.username, config.password);
-      if (!session) {
+      const session = await createSession();
+      const cookies = await login(session, config.username, config.password);
+      if (!cookies) {
         console.error(`[ERROR] Gagal login untuk kelas ${className}`);
         continue;
       }
 
       for (const [courseName, courseUrl] of Object.entries(config.matkul)) {
         console.log(`[INFO] Memeriksa tugas baru untuk ${courseName}`);
-        await detectNewTasks(courseUrl, session, sentTasks, client, config.channel);
+        await detectNewTasks(courseUrl, session, sentTasks, client, config.channel, config.id);
       }
     } catch (error) {
       console.error(`[ERROR] Kesalahan saat memproses kelas ${className}: ${error.message}`);
@@ -44,7 +43,7 @@ client.once("ready", async () => {
   }
 });
 
-// Event: Pesan
+// Tambahkan event listener untuk menangkap perintah `!isAlive`
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return; // Abaikan pesan dari bot
   if (message.content === "!isAlive") {
@@ -62,5 +61,4 @@ http.createServer((req, res) => {
   console.log(`HTTP server listening on port ${PORT}`);
 });
 
-// Login ke Discord
 client.login(process.env.DISCORD_TOKEN);
